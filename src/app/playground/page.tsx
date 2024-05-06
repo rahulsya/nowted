@@ -1,8 +1,4 @@
 "use client";
-import Quill from "quill";
-import React from "react";
-
-const Delta = Quill.import("delta");
 
 function Playground() {
   return (
