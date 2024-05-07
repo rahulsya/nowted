@@ -3,5 +3,19 @@ import fileActiveIC from "./file_active.svg";
 import folderIC from "./folder.svg";
 import folderOpenIC from "./folder_open.svg";
 import folderNewIC from "./folder_new.svg";
+import favoritesIC from "./Favorites.svg";
+import archiveIC from "./Archive.svg";
+import trashIC from "./Trash.svg";
+import calenderIC from "./Calender.svg";
 
-export { fileIC, fileActiveIC, folderIC, folderOpenIC, folderNewIC };
+export {
+  fileIC,
+  fileActiveIC,
+  folderIC,
+  folderOpenIC,
+  folderNewIC,
+  favoritesIC,
+  archiveIC,
+  trashIC,
+  calenderIC,
+};

@@ -51,7 +51,7 @@ function SidebarNotes() {
     },
   ];
   return (
-    <Space x={20} y={30}>
+    <Space spaces={{ x: 20, y: 30 }}>
       <div className="text-white font-semibold text-[22px] pb-[20px]">
         Personal
       </div>

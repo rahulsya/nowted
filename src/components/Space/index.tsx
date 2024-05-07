@@ -2,14 +2,31 @@ import React from "react";
 
 function Space({
   children,
-  x,
-  y,
+  spaces,
+  typeSpace = "padding",
 }: Readonly<{
   children: React.ReactNode;
-  x?: number | 0;
-  y?: number | 0;
+  typeSpace?: "padding" | "margin";
+  spaces: {
+    x?: number;
+    y?: number;
+    r?: number;
+    l?: number;
+    t?: number;
+    b?: number;
+  };
 }>) {
-  return <div className={`px-[${x}px] py-[${y}px]`}>{children}</div>;
+  const classes = () => {
+    let classname: string[] = [];
+    if (spaces) {
+      Object.entries(spaces).map(([key, value]) => {
+        const spaceType = typeSpace == "padding" ? "p" : "m";
+        classname.push(`${spaceType}${key}-[${value}px]`);
+      });
+    }
+    return classname.join(" ");
+  };
+  return <div className={classes()}>{children}</div>;
 }
 
 export default Space;
