@@ -7,6 +7,7 @@ import favoritesIC from "./Favorites.svg";
 import archiveIC from "./Archive.svg";
 import trashIC from "./Trash.svg";
 import calenderIC from "./Calender.svg";
+import loadingIC from "./loadingIC.svg";
 
 export {
   fileIC,
@@ -18,4 +19,5 @@ export {
   archiveIC,
   trashIC,
   calenderIC,
+  loadingIC,
 };

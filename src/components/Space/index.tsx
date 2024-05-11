@@ -1,10 +1,11 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 
 function Space({
   children,
   spaces,
   typeSpace = "padding",
-}: Readonly<{
+}: {
   children: React.ReactNode;
   typeSpace?: "padding" | "margin";
   spaces: {
@@ -15,7 +16,8 @@ function Space({
     t?: number;
     b?: number;
   };
-}>) {
+}) {
+  const [space, setSpace] = useState("");
   const classes = () => {
     let classname: string[] = [];
     if (spaces) {
@@ -26,7 +28,12 @@ function Space({
     }
     return classname.join(" ");
   };
-  return <div className={classes()}>{children}</div>;
+
+  useEffect(() => {
+    setSpace(classes());
+  }, [spaces]);
+
+  return <div className={`${space}`}>{children}</div>;
 }
 
 export default Space;

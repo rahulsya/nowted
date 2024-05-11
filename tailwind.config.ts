@@ -20,6 +20,9 @@ const config: Config = {
         "dark-light": "#333333",
         "blue-dark": "#312EB5",
       },
+      animation: {
+        "spin-slow": "spin 3s linear infinite",
+      },
     },
   },
   darkMode: ["selector", '[data-mode="dark"]'],

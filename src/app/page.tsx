@@ -1,42 +1,151 @@
-import Space from "@/components/Space";
+"use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { calenderIC, folderIC } from "@/assets/icons";
+import { useSearchParams } from "next/navigation";
+import { calenderIC, folderIC, loadingIC } from "@/assets/icons";
+import { File } from "@/assets/images";
+
+import useForm from "@/hooks/useForm";
+import useLoading from "@/hooks/useLoading";
+import { getNote, updateNote } from "@/firebase/store";
 
 export default function Home() {
+  const params = useSearchParams();
+  const { form, setForm, changeForm, clearForm } = useForm();
+  const { isLoading, startLoading, stopLoading } = useLoading();
+
+  const [changeInput, setChangeInput] = useState(false);
+  // const [timeoutId,setTimeoutId]=useState<NodeJS.Timeout>()
+
+  const handleInputChance = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { target } = event;
+    const newValue = target.value;
+    setChangeInput(true);
+    changeForm(target.name, newValue);
+  };
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    timeoutId = setTimeout(() => {
+      if (changeInput && form.id) handleUpdateNote();
+      setChangeInput(false);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [form]);
+
+  useEffect(() => {
+    if (params.get("id")) {
+      startLoading();
+      const id = params.get("id");
+      getNoteById(id as string);
+    } else {
+      clearForm();
+    }
+  }, [params]);
+
+  const getNoteById = async (id: string) => {
+    try {
+      const data = await getNote(id);
+      if (data) {
+        setForm({ ...data, id: `${id}` });
+      }
+      stopLoading();
+    } catch (error) {
+      stopLoading();
+      console.log(error);
+    }
+  };
+
+  const handleUpdateNote = async () => {
+    await updateNote(form);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-2 text-center">
+        <Image
+          className="animate-spin-slow"
+          width={120}
+          height={120}
+          src={loadingIC}
+          alt="icon_loading"
+        />
+        <div className="text-2xl font-semibold text-white">
+          Proccessing Load Note ...
+        </div>
+        <div className="max-w-[460px] text-gray-400">
+          {`
+          "Writing is a way of thinking. To write well is to think clearly.
+          That's why it's so hard." - David McCullough
+          `}
+        </div>
+      </div>
+    );
+  }
+
+  if (form.id == "") {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-2 text-center">
+        <Image width={120} height={120} src={File} alt="icon_file" />
+        <div className="text-2xl font-semibold text-white">
+          Select a note to view
+        </div>
+        <div className="max-w-[460px] text-gray-400">
+          Choose a note from the list on the left to view its contents, or
+          create a new note to add to your collection.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen flex-col p-[50px]">
-      <div className="text-[32px] font-semibold text-white">
-        Reflection on the Month of June
+      <input
+        type="text"
+        placeholder="Untitled"
+        className="bg-transparent text-[32px] font-semibold text-white focus:outline-none"
+        value={form.title}
+        name="title"
+        onChange={(e) => handleInputChance(e)}
+      />
+      <div className="mt-4 flex gap-4 border-b border-gray-500 pb-4">
+        <Image width={20} height={20} src={calenderIC} alt="icon" />
+        <div className="font-semibold text-gray-400">Date</div>
+        <div className="pl-4">
+          <input
+            type="date"
+            name="date"
+            className="bg-transparent font-semibold text-white focus:outline-none"
+            value={form.date}
+            onChange={(e) => handleInputChance(e)}
+          />
+        </div>
       </div>
-      <Space spaces={{ t: 30 }}>
-        <div className="mt-4 flex gap-4 border-b border-gray-500 pb-4">
-          <Image width={20} height={20} src={calenderIC} alt="icon" />
-          <div className="font-semibold text-gray-400">Date</div>
-          <div className="pl-4 font-semibold text-white">21/06/2022</div>
-        </div>
 
-        <div className="mt-4 flex gap-4 border-b border-gray-500 pb-4">
-          <Image width={20} height={20} src={folderIC} alt="icon" />
-          <div className="font-semibold text-gray-400">Folder</div>
-          <div className="pl-4 font-semibold text-white">Personal</div>
+      <div className="mt-4 flex gap-4 border-b border-gray-500 pb-4">
+        <Image width={20} height={20} src={folderIC} alt="icon" />
+        <div className="font-semibold text-gray-400">Folder</div>
+        <div className="pl-4">
+          <input
+            type="text"
+            name="folder"
+            placeholder="Untitled Folder"
+            value={form.folder}
+            onChange={(e) => handleInputChance(e)}
+            className="bg-transparent font-semibold text-white focus:outline-none"
+          />
         </div>
-      </Space>
+      </div>
       <textarea
         rows={1}
-        placeholder="Content"
+        name="content"
+        placeholder="Write Content Here..."
         className="m-0 h-full w-full resize-none border-0 bg-transparent py-[10px] text-white placeholder:text-gray-400 focus:outline-none"
-        defaultValue={`
-        It's hard to believe that June is already over! Looking back on the month, there were a few highlights that stand out to me.
-
-        One of the best things that happened was getting promoted at work. I've been working really hard and it's great to see that effort recognized. It's also exciting to have more responsibility and the opportunity to contribute to the company in a bigger way. I'm looking forward to taking on new challenges and learning as much as I can in my new role.
-        
-        I also had a great time on my vacation to Hawaii. The beaches were beautiful and I loved trying all of the different types of Hawaiian food. It was nice to relax and get away from the daily grind for a bit. I'm so grateful to have had the opportunity to take a trip like that.
-        
-        On the downside, I feel like I didn't make as much progress on my fitness goals as I would have liked. I was really busy with work and didn't make it to the gym as often as I planned. I'm going to try to be more consistent in July and make exercise a higher priority. I know it will be good for my physical and mental health.
-        
-        I also had a few rough patches in my relationships this month. I had a couple of misunderstandings with friends and it was hard to navigate those conflicts. But I'm glad we were able to talk things through and move past them. I value my relationships and I want to make sure I'm always working to be a good friend.
-        
-        Overall, it was a good month with a mix of ups and downs. I'm looking forward to what July has in store! I'm hoping to make some more progress on my goals and spend quality time with the people I care about.`}
+        defaultValue={``}
+        onChange={(e) => handleInputChance(e)}
+        value={form.content}
       ></textarea>
     </div>
   );

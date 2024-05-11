@@ -8,7 +8,7 @@ const inter = Source_Sans_3({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Nowted",
-  description: "Notes Generator",
+  description: "Note App",
 };
 
 export default function RootLayout({
@@ -19,11 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex flex-row h-screen">
-          <div className="bg-dark-primary w-[500px]">
+        <div className="flex h-screen flex-row">
+          <div className="w-[500px] overflow-y-auto bg-dark-primary">
             <Sidebar />
           </div>
-          <div className="bg-dark-second w-[550px] overflow-y-auto">
+          <div className="w-[550px] overflow-y-auto bg-dark-second">
             <SidebarNotes />
           </div>
           <div className="w-full bg-dark-primary">{children}</div>

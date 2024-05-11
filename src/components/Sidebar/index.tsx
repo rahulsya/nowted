@@ -1,85 +1,101 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { NowtedLogo } from "@/assets/logo";
 import Button from "@/components/Button";
-import Space from "@/components/Space";
-import {
-  fileIC,
-  folderIC,
-  favoritesIC,
-  trashIC,
-  archiveIC,
-} from "@/assets/icons/index";
+import { fileIC, favoritesIC, trashIC, archiveIC } from "@/assets/icons/index";
+import { useRouter, useSearchParams } from "next/navigation";
 import SidebarItem from "@/components/SidebarItem";
-import SectionTitle from "../SectionTitle";
+import SectionTitle from "@/components/SectionTitle";
+import useLoading from "@/hooks/useLoading";
+import { newNote, getRecentNotes } from "@/firebase/store";
+import { Note } from "@/types/types";
+import NoteFolder from "../NoteFolder";
+import { dateNow } from "@/utils/date";
 
 function Sidebar() {
-  const recentItems = [
-    {
-      id: "1",
-      title: "Reflection on the Month of June",
-    },
-    {
-      id: "2",
-      title: "My Favorite Memories from Childhood",
-    },
-    {
-      id: "3",
-      title: "My Goals for the Next Year",
-    },
-  ];
+  const router = useRouter();
+  const params = useSearchParams();
+  const { isLoading, startLoading, stopLoading } = useLoading();
+  const [recentNotes, setRecentNotes] = useState<Note[]>([]);
 
-  const folderProjects = [
-    {
-      id: "1",
-      title: "Personal",
-    },
-    {
-      id: "2",
-      title: "Work",
-    },
-    {
-      id: "3",
-      title: "Travel",
-    },
-    {
-      id: "4",
-      title: "Events",
-    },
-    {
-      id: "5",
-      title: "Finances",
-    },
-  ];
+  useEffect(() => {
+    getNotes();
+  }, []);
+
+  const handleNewNote = async () => {
+    try {
+      startLoading();
+      const folder = params.get("folder")
+        ? (params.get("folder") as string)
+        : "";
+      const data = await newNote({
+        id: "",
+        content: "",
+        date: dateNow(),
+        folder: folder,
+        title: "",
+      });
+      if (folder) {
+        router.push(`/?folder=${folder}&id=${data?.id}`);
+      } else {
+        router.push(`/?id=${data?.id}`);
+      }
+      stopLoading();
+    } catch (error) {
+      stopLoading();
+      console.log(error);
+    }
+  };
+
+  // recent note
+  const getNotes = async () => {
+    try {
+      startLoading();
+      const data = await getRecentNotes();
+      if (data) {
+        setRecentNotes(data);
+      }
+      stopLoading();
+    } catch (error) {}
+  };
 
   return (
     <div className="flex flex-col py-[30px]">
       <div className="flex flex-row px-[20px]">
         <Image src={NowtedLogo} width={100} height={38} alt="nowted_logo" />
       </div>
-      <Space spaces={{ x: 20, t: 30 }}>
-        <Button text="+ Add new" />
-      </Space>
-      <Space spaces={{ t: 30 }}>
-        <Space spaces={{ x: 20, y: 5 }}>
+      <div className="px-[20px] pt-[30px]">
+        <Button
+          disabled={isLoading}
+          onClick={() => handleNewNote()}
+          text="+ Add new"
+        />
+      </div>
+      <div className="mt-[30px]">
+        <div className="px-[20px] py-[5px]">
           <SectionTitle title="Recents" />
-        </Space>
-        {recentItems.map((item, index) => {
-          return <SidebarItem data={item} key={index} icon={fileIC} />;
+        </div>
+        {recentNotes.map((item, index) => {
+          return (
+            <SidebarItem
+              onClick={() => router.push(`/?id=${item.id}`)}
+              data={item}
+              key={index}
+              icon={fileIC}
+            />
+          );
         })}
-      </Space>
-      <Space spaces={{ t: 30 }}>
-        <Space spaces={{ x: 20, y: 5 }}>
-          <SectionTitle title="Folder" />
-        </Space>
-        {folderProjects.map((item, index) => {
-          return <SidebarItem data={item} key={index} icon={folderIC} />;
-        })}
-      </Space>
-      <Space spaces={{ t: 30 }}>
-        <Space spaces={{ x: 20, y: 5 }}>
+      </div>
+
+      <div className="pt-[30px]">
+        <NoteFolder />
+      </div>
+
+      <div className="pt-[30px]">
+        <div className="px-[20px] py-[5px]">
           <SectionTitle title="More" />
-        </Space>
+        </div>
         <div>
           <SidebarItem
             data={{ id: "del", title: "Favorites" }}
@@ -91,7 +107,7 @@ function Sidebar() {
             icon={archiveIC}
           />
         </div>
-      </Space>
+      </div>
     </div>
   );
 }

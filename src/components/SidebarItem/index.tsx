@@ -8,13 +8,22 @@ type IProps = {
     id: string;
   };
   icon?: string;
+  onClick?: () => void;
+  active?: boolean;
+  activeClass?: string;
 };
 
-function SidebarItem({ data, icon }: IProps) {
+function SidebarItem({ data, icon, onClick, active, activeClass }: IProps) {
+  const activeClasses = active && activeClass;
   return (
-    <div className="flex flex-row items-start gap-2 py-[10px] px-[20px] hover:bg-dark-light cursor-pointer">
+    <div
+      onClick={onClick}
+      className={`flex cursor-pointer flex-row items-start gap-2 px-[20px] py-[10px] hover:bg-dark-light ${activeClasses}`}
+    >
       {icon && <Image width={20} height={20} src={icon} alt="icon" />}
-      <div className="text-gray-400 font-semibold">{data.title}</div>
+      <div className={`font-semibold text-gray-400 ${active && "text-white"}`}>
+        {data.title ? data.title : "Untitled"}
+      </div>
     </div>
   );
 }
