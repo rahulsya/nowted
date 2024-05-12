@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
@@ -19,15 +20,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex h-screen flex-row">
-          <div className="w-[500px] overflow-y-auto bg-dark-primary">
-            <Sidebar />
+        <Suspense>
+          <div className="flex h-screen flex-row">
+            <div className="w-[500px] overflow-y-auto bg-dark-primary">
+              <Sidebar />
+            </div>
+            <div className="w-[550px] overflow-y-auto bg-dark-second">
+              <SidebarNotes />
+            </div>
+            <div className="w-full bg-dark-primary">{children}</div>
           </div>
-          <div className="w-[550px] overflow-y-auto bg-dark-second">
-            <SidebarNotes />
-          </div>
-          <div className="w-full bg-dark-primary">{children}</div>
-        </div>
+        </Suspense>
       </body>
     </html>
   );
