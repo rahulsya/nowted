@@ -20,8 +20,17 @@ const config: Config = {
         "dark-light": "#333333",
         "blue-dark": "#312EB5",
       },
+      keyframes: {
+        fadein: {
+          "0%": { opacity: "0" },
+          "25%": { opacity: "0.3" },
+          "50%": { opacity: "0.5" },
+          "100%": { opacity: "1" },
+        },
+      },
       animation: {
         "spin-slow": "spin 3s linear infinite",
+        "fade-in": "fadein 0.3s forwards",
       },
     },
   },
