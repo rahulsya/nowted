@@ -3,7 +3,13 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { NowtedLogo } from "@/assets/logo";
 import Button from "@/components/Button";
-import { fileIC, favoritesIC, trashIC, archiveIC } from "@/assets/icons/index";
+import {
+  fileIC,
+  favoritesIC,
+  trashIC,
+  archiveIC,
+  fileActiveIC,
+} from "@/assets/icons/index";
 import { useRouter, useSearchParams } from "next/navigation";
 import SidebarItem from "@/components/SidebarItem";
 import SectionTitle from "@/components/SectionTitle";
@@ -79,10 +85,12 @@ function Sidebar() {
         {recentNotes.map((item, index) => {
           return (
             <SidebarItem
+              activeClass={"bg-blue-dark"}
+              active={params.get("id") == item.id}
               onClick={() => router.push(`/?id=${item.id}`)}
               data={item}
               key={index}
-              icon={fileIC}
+              icon={params.get("id") == item.id ? fileActiveIC : fileIC}
             />
           );
         })}

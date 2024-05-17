@@ -8,11 +8,17 @@ import { File } from "@/assets/images";
 import useForm from "@/hooks/useForm";
 import useLoading from "@/hooks/useLoading";
 import { getNote, updateNote } from "@/firebase/store";
+import ActionButton from "@/components/ActionButton";
 
 export default function Home() {
   const params = useSearchParams();
   const { form, setForm, changeForm, clearForm } = useForm();
   const { isLoading, startLoading, stopLoading } = useLoading();
+  const {
+    isLoading: isSaving,
+    startLoading: startSaving,
+    stopLoading: stopSaving,
+  } = useLoading();
 
   const [changeInput, setChangeInput] = useState(false);
   // const [timeoutId,setTimeoutId]=useState<NodeJS.Timeout>()
@@ -59,7 +65,9 @@ export default function Home() {
   };
 
   const handleUpdateNote = async () => {
+    startSaving();
     await updateNote(form);
+    stopSaving();
   };
 
   if (isLoading) {
@@ -100,16 +108,39 @@ export default function Home() {
     );
   }
 
+  const SavingLoading = () => {
+    return (
+      <div className="flex flex-row items-center gap-2">
+        <Image
+          className="animate-spin-slow"
+          width={25}
+          height={25}
+          src={loadingIC}
+          alt="icon_loading"
+        />
+        <div className="text-white">Saving...</div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex h-screen flex-col p-[50px]">
-      <input
-        type="text"
-        placeholder="Untitled"
-        className="bg-transparent text-[32px] font-semibold text-white focus:outline-none"
-        value={form.title}
-        name="title"
-        onChange={(e) => handleInputChance(e)}
-      />
+      <div className="flex flex-row items-center justify-between gap-2 ">
+        <div className="flex w-full flex-row justify-between">
+          <input
+            type="text"
+            placeholder="Untitled"
+            className="w-full bg-transparent text-[32px] font-semibold text-white focus:outline-none"
+            value={form.title}
+            name="title"
+            onChange={(e) => handleInputChance(e)}
+          />
+          {isSaving && <SavingLoading />}
+        </div>
+        <div className="flex items-center gap-2">
+          <ActionButton />
+        </div>
+      </div>
       <div className="mt-4 flex gap-4 border-b border-gray-500 pb-4">
         <Image width={20} height={20} src={calenderIC} alt="icon" />
         <div className="font-semibold text-gray-400">Date</div>

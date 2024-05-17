@@ -8,6 +8,8 @@ import archiveIC from "./Archive.svg";
 import trashIC from "./Trash.svg";
 import calenderIC from "./Calender.svg";
 import loadingIC from "./loadingIC.svg";
+import contextMenuIC from "./context-menu.svg";
+import contextMenuActiveIC from "./context-menu-active.svg";
 
 export {
   fileIC,
@@ -20,4 +22,6 @@ export {
   trashIC,
   calenderIC,
   loadingIC,
+  contextMenuIC,
+  contextMenuActiveIC,
 };
